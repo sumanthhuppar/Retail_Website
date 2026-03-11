@@ -17,289 +17,110 @@
   <!-- TOAST -->
   <div id="toast" class="toast"></div>
 
-  <!-- ============================================
-     PAGE 1: LOGIN
-     ============================================ -->
-  <div id="loginPage" class="page login-page">
-    <div class="login-card">
-      <div class="login-hero">
-        <div class="emoji">🛍️</div>
-        <h2>ShopEase</h2>
-        <p>Your one-stop destination for everything you love. Shop the latest trends with amazing deals.</p>
+  <!-- Header -->
+  <header class="site-header" id="siteHeader"></header>
+
+  <main>
+    <div class="container" style="padding-top:32px;">
+      <!-- Hero Banner -->
+      <div class="hero-banner" id="heroBanner">
+        <div class="hero-track" id="heroTrack"></div>
+        <div class="hero-dots" id="heroDots"></div>
       </div>
-      <div class="login-form-side">
-        <h1>Welcome Back!</h1>
-        <p class="subtitle">Sign in to your account to continue</p>
-        <div class="form-group">
-          <label>Email Address</label>
-          <div class="input-wrap">
-            <span class="input-icon">📧</span>
-            <input type="email" id="emailInput" placeholder="Enter your email" />
-          </div>
+
+      <!-- Categories -->
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">🛒 Shop by Category</h2>
+          <a href="products.html?cat=0&name=All%20Products" class="see-all">View All Products →</a>
         </div>
-        <div class="form-group">
-          <label>Password</label>
-          <div class="input-wrap">
-            <span class="input-icon">🔒</span>
-            <input type="password" id="passwordInput" placeholder="Enter your password" />
-          </div>
+        <div class="categories-grid" id="categoriesGrid"></div>
+      </div>
+
+      <!-- Flash Deals -->
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">⚡ Flash Deals</h2>
+          <a href="products.html?cat=0&name=All%20Products" class="see-all">See All →</a>
         </div>
-        <div class="form-options">
-          <label><input type="checkbox" checked /> Remember me</label>
-          <a href="#" onclick="showToast('Password reset link sent!');return false;">Forgot Password?</a>
+        <div class="products-row" id="flashDealsRow"></div>
+      </div>
+
+      <!-- Recommended -->
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">✨ Recommended For You</h2>
         </div>
-        <button class="btn btn-primary-full" onclick="loginSuccess()">Sign In →</button>
-        <div class="divider">Or continue with</div>
-        <div class="social-row">
-          <button class="btn-social" onclick="loginSuccess()"><span style="color:#4285F4;font-weight:800;">G</span>
-            Google</button>
-          <button class="btn-social" onclick="loginSuccess()"><span style="color:#1877F2;font-weight:800;">f</span>
-            Facebook</button>
-        </div>
-        <div class="login-footer">Don't have an account? <a href="#"
-            onclick="showToast('Sign Up - Coming soon!');return false;">Sign Up</a></div>
+        <div class="products-grid" id="recommendedGrid"></div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- ============================================
-     PAGE 2: HOME
-     ============================================ -->
-  <div id="homePage" class="page active">
-    <!-- Header -->
-    <header class="site-header">
-      <div class="header-top">
-        <div class="container">
-          <span>📍 Free Delivery on orders above ₹500</span>
-          <span>📞 Customer Support: 1800-000-0000</span>
+  <!-- Footer -->
+  <footer class="site-footer" id="siteFooter"></footer>
+
+  <script src="shared.js"></script>
+  <script>
+    // ============ HOME PAGE LOGIC ============
+    let bannerIndex = 0;
+    let bannerInterval;
+
+    function renderHomePage() {
+      renderHeader('siteHeader');
+      renderFooter('siteFooter');
+
+      // Hero Banner
+      const track = document.getElementById('heroTrack');
+      const dots = document.getElementById('heroDots');
+      track.innerHTML = banners.map(b => `
+        <div class="hero-slide" style="background:${b.gradient}">
+          <span class="hero-badge">${b.badge}</span>
+          <h2 class="hero-title">${b.title}</h2>
+          <p class="hero-subtitle">${b.subtitle}</p>
+          <a href="products.html?cat=0&name=All%20Products" class="hero-cta">Shop Now →</a>
         </div>
-      </div>
-      <div class="header-main">
-        <div class="container">
-          <div class="logo" onclick="navigateTo('homePage')">
-            <span class="logo-emoji">🛍️</span>
-            <span class="logo-text">ShopEase</span>
-          </div>
-          <div class="header-search">
-            <input type="text" placeholder="Search for products, brands and more..." />
-            <span class="search-icon">🔍</span>
-          </div>
-          <div class="header-actions">
-            <button class="header-btn" id="loginHeaderBtn" onclick="navigateTo('loginPage')">
-              <span class="emoji">🔑</span>
-              <span>Login</span>
-            </button>
-            <button class="header-btn" onclick="showToast('Profile coming soon!')">
-              <span class="emoji">👤</span>
-              <span>Account</span>
-            </button>
-            <button class="header-btn" onclick="showToast('Wishlist coming soon!')">
-              <span class="emoji">❤️</span>
-              <span>Wishlist</span>
-            </button>
-            <button class="header-btn" id="headerCartBtn" onclick="navigateTo('cartPage')">
-              <span class="emoji">🛒</span>
-              <span>Cart</span>
-              <span class="badge" id="headerCartBadge" style="display:none;">0</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <nav class="nav-bar" id="navBar">
-        <div class="container" id="navLinks"></div>
-      </nav>
-    </header>
+      `).join('');
+      dots.innerHTML = banners.map((_, i) => `<div class="hero-dot ${i === 0 ? 'active' : ''}" onclick="goToBanner(${i})"></div>`).join('');
 
-    <main>
-      <div class="container" style="padding-top:32px;">
-        <!-- Hero Banner -->
-        <div class="hero-banner" id="heroBanner">
-          <div class="hero-track" id="heroTrack"></div>
-          <div class="hero-dots" id="heroDots"></div>
-        </div>
+      clearInterval(bannerInterval);
+      bannerIndex = 0;
+      bannerInterval = setInterval(() => {
+        bannerIndex = (bannerIndex + 1) % banners.length;
+        goToBanner(bannerIndex);
+      }, 5000);
 
-        <!-- Categories -->
-        <div class="section">
-          <div class="section-header">
-            <h2 class="section-title">🛒 Shop by Category</h2>
-            <span class="see-all" onclick="showAllProducts()">View All Products →</span>
-          </div>
-          <div class="categories-grid" id="categoriesGrid"></div>
-        </div>
+      // Categories Grid
+      document.getElementById('categoriesGrid').innerHTML = categories.map(c => `
+        <a href="products.html?cat=${c.id}&name=${encodeURIComponent(c.name)}" class="category-card">
+          <span class="emoji">${c.icon}</span>
+          <span class="name">${c.name}</span>
+          <span class="count">${c.count}+ items</span>
+        </a>
+      `).join('');
 
-        <!-- Flash Deals -->
-        <div class="section">
-          <div class="section-header">
-            <h2 class="section-title">⚡ Flash Deals</h2>
-            <span class="see-all" onclick="showAllProducts()">See All →</span>
-          </div>
-          <div class="products-row" id="flashDealsRow"></div>
-        </div>
+      // Flash Deals
+      document.getElementById('flashDealsRow').innerHTML = shuffle(products).slice(0, 6).map(productCardHTML).join('');
 
-        <!-- Recommended -->
-        <div class="section">
-          <div class="section-header">
-            <h2 class="section-title">✨ Recommended For You</h2>
-          </div>
-          <div class="products-grid" id="recommendedGrid"></div>
-        </div>
-      </div>
-    </main>
+      // Recommended
+      document.getElementById('recommendedGrid').innerHTML = shuffle(products).slice(0, 8).map(productCardHTML).join('');
+    }
 
-    <!-- Footer -->
-    <footer class="site-footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div class="footer-brand">
-            <div class="logo">
-              <span class="logo-emoji">🛍️</span>
-              <span class="logo-text">ShopEase</span>
-            </div>
-            <p>Your one-stop shop for electronics, fashion, home decor, beauty, sports and more. We deliver happiness at
-              your doorstep.</p>
-          </div>
-          <div class="footer-col">
-            <h4>Quick Links</h4>
-            <ul>
-              <li><a href="#" onclick="showToast('About Us - Coming soon!')">About Us</a></li>
-              <li><a href="#" onclick="showToast('Contact Us - Coming soon!')">Contact</a></li>
-              <li><a href="#" onclick="showToast('Careers - Coming soon!')">Careers</a></li>
-              <li><a href="#" onclick="showToast('Blog - Coming soon!')">Blog</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h4>Customer Service</h4>
-            <ul>
-              <li><a href="#">Help Center</a></li>
-              <li><a href="#">Returns & Refunds</a></li>
-              <li><a href="#">Shipping Info</a></li>
-              <li><a href="#">Track Order</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h4>Connect With Us</h4>
-            <ul>
-              <li><a href="#">📘 Facebook</a></li>
-              <li><a href="#">📷 Instagram</a></li>
-              <li><a href="#">🐦 Twitter</a></li>
-              <li><a href="#">📺 YouTube</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <span>© 2025 ShopEase. All rights reserved.</span>
-          <div class="footer-payments">💳 📱 🏦 💵</div>
-        </div>
-      </div>
-    </footer>
-  </div>
+    function goToBanner(index) {
+      bannerIndex = index;
+      document.getElementById('heroTrack').style.transform = `translateX(-${index * 100}%)`;
+      document.querySelectorAll('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === index));
+    }
 
-  <!-- ============================================
-     PAGE 3: PRODUCT LIST
-     ============================================ -->
-  <div id="productListPage" class="page">
-    <header class="site-header" id="listHeader"></header>
-    <main>
-      <div class="container list-page-content">
-        <div class="breadcrumb">
-          <a href="#" onclick="navigateTo('homePage');return false;">Home</a>
-          <span class="sep">›</span>
-          <span id="breadcrumbCategory">Category</span>
-        </div>
-        <div class="list-layout">
-          <aside class="filter-sidebar">
-            <h3>⚙ Filters</h3>
-            <div class="filter-group">
-              <h4>Price Range</h4>
-              <label><input type="checkbox" checked /> All Prices</label>
-              <label><input type="checkbox" /> Under ₹500</label>
-              <label><input type="checkbox" /> ₹500 - ₹1,000</label>
-              <label><input type="checkbox" /> ₹1,000 - ₹3,000</label>
-              <label><input type="checkbox" /> Above ₹3,000</label>
-            </div>
-            <div class="filter-group">
-              <h4>Rating</h4>
-              <label><input type="checkbox" /> ★★★★★ & above</label>
-              <label><input type="checkbox" /> ★★★★ & above</label>
-              <label><input type="checkbox" /> ★★★ & above</label>
-            </div>
-            <div class="filter-group">
-              <h4>Availability</h4>
-              <label><input type="checkbox" checked /> In Stock Only</label>
-            </div>
-          </aside>
-          <div class="list-main">
-            <div class="list-header">
-              <div>
-                <h2 id="listTitle">Category</h2>
-                <span class="count" id="productCount">0 products</span>
-              </div>
-              <select class="sort-select" onchange="showToast('Sort applied!')">
-                <option>Sort: Relevance</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-                <option>Newest First</option>
-                <option>Rating</option>
-              </select>
-            </div>
-            <div class="products-grid" id="listGrid"></div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- ============================================
-     PAGE 4: PRODUCT DETAIL
-     ============================================ -->
-  <div id="productDetailPage" class="page">
-    <header class="site-header" id="detailHeader"></header>
-    <main>
-      <div class="container detail-page-content">
-        <div class="breadcrumb" id="detailBreadcrumb"></div>
-        <div id="detailContent"></div>
-      </div>
-    </main>
-  </div>
-
-  <!-- ============================================
-     PAGE 5: CART
-     ============================================ -->
-  <div id="cartPage" class="page">
-    <header class="site-header" id="cartHeader"></header>
-    <main>
-      <div class="container cart-page-content">
-        <h1 style="font-size:28px;font-weight:800;margin-bottom:24px;">🛒 Shopping Cart <span id="cartCountLabel"
-            style="font-size:16px;color:var(--text-secondary);font-weight:400;"></span></h1>
-        <div id="cartContent"></div>
-      </div>
-    </main>
-  </div>
-
-  <!-- ============================================
-     PAGE 6: PAYMENT
-     ============================================ -->
-  <div id="paymentPage" class="page">
-    <header class="site-header" id="paymentHeader"></header>
-    <main>
-      <div class="container payment-page-content">
-        <h1 style="font-size:28px;font-weight:800;margin-bottom:24px;">💳 Checkout</h1>
-        <div id="paymentContent"></div>
-      </div>
-    </main>
-  </div>
-
-  <!-- ============================================
-     PAGE 7: ORDER CONFIRMATION
-     ============================================ -->
-  <div id="orderPage" class="page">
-    <header class="site-header" id="orderHeader"></header>
-    <main>
-      <div class="container order-page-content" id="orderContent"></div>
-    </main>
-  </div>
-
-  <script src="app.js"></script>
+    // Check for login redirect
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHomePage();
+      if (getUrlParam('loggedIn') === 'true') {
+        setTimeout(() => showToast('Logged in successfully! 🎉'), 300);
+        // Clean the URL
+        window.history.replaceState({}, '', 'index.html');
+      }
+    });
+  </script>
 </body>
 
 </html>

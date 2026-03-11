@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Products – ShopEase</title>
+    <meta name="description"
+        content="Browse our curated collection of products across electronics, fashion, home, beauty, sports, books, toys and grocery." />
+    <link rel="stylesheet" href="styles.css" />
+    <script
+        src="https://cdn.c360a.salesforce.com/beacon/c360a/8842efab-59fa-426b-980d-b80e8fdeb8ed/scripts/c360a.min.js"></script>
+</head>
+
+<body>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Header -->
+    <header class="site-header" id="siteHeader"></header>
+
+    <main>
+        <div class="container list-page-content">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span class="sep">›</span>
+                <span id="breadcrumbCategory">Category</span>
+            </div>
+            <div class="list-layout">
+                <aside class="filter-sidebar">
+                    <h3>⚙ Filters</h3>
+                    <div class="filter-group">
+                        <h4>Price Range</h4>
+                        <label><input type="checkbox" checked /> All Prices</label>
+                        <label><input type="checkbox" /> Under ₹500</label>
+                        <label><input type="checkbox" /> ₹500 - ₹1,000</label>
+                        <label><input type="checkbox" /> ₹1,000 - ₹3,000</label>
+                        <label><input type="checkbox" /> Above ₹3,000</label>
+                    </div>
+                    <div class="filter-group">
+                        <h4>Rating</h4>
+                        <label><input type="checkbox" /> ★★★★★ & above</label>
+                        <label><input type="checkbox" /> ★★★★ & above</label>
+                        <label><input type="checkbox" /> ★★★ & above</label>
+                    </div>
+                    <div class="filter-group">
+                        <h4>Availability</h4>
+                        <label><input type="checkbox" checked /> In Stock Only</label>
+                    </div>
+                </aside>
+                <div class="list-main">
+                    <div class="list-header">
+                        <div>
+                            <h2 id="listTitle">Category</h2>
+                            <span class="count" id="productCount">0 products</span>
+                        </div>
+                        <select class="sort-select" onchange="showToast('Sort applied!')">
+                            <option>Sort: Relevance</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Newest First</option>
+                            <option>Rating</option>
+                        </select>
+                    </div>
+                    <div class="products-grid" id="listGrid"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" id="siteFooter"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHeader('siteHeader');
+            renderFooter('siteFooter');
+
+            const catId = parseInt(getUrlParam('cat') || '0');
+            const catName = getUrlParam('name') || 'All Products';
+
+            document.title = catName + ' – ShopEase';
+
+            const prods = catId === 0 ? products : products.filter(p => p.categoryId === catId);
+
+            document.getElementById('listTitle').textContent = catName;
+            document.getElementById('breadcrumbCategory').textContent = catName;
+            document.getElementById('productCount').textContent = `${prods.length} products found`;
+            document.getElementById('listGrid').innerHTML = prods.map(productCardHTML).join('');
+        });
+    </script>
+</body>
+
+</html>

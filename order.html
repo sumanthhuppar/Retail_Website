@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Confirmed – ShopEase</title>
+    <meta name="description"
+        content="Your order has been placed successfully! Track your order and continue shopping on ShopEase." />
+    <link rel="stylesheet" href="styles.css" />
+    <script
+        src="https://cdn.c360a.salesforce.com/beacon/c360a/8842efab-59fa-426b-980d-b80e8fdeb8ed/scripts/c360a.min.js"></script>
+</head>
+
+<body>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Header -->
+    <header class="site-header" id="siteHeader"></header>
+
+    <main>
+        <div class="container order-page-content" id="orderContent"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" id="siteFooter"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHeader('siteHeader');
+            renderFooter('siteFooter');
+
+            // Retrieve the last order data
+            let orderData;
+            try {
+                orderData = JSON.parse(localStorage.getItem('shopease_last_order'));
+            } catch { orderData = null; }
+
+            if (!orderData) {
+                document.getElementById('orderContent').innerHTML = `
+          <div class="empty-cart">
+            <div class="emoji">📦</div>
+            <h3>No recent orders</h3>
+            <p>You don't have any recent orders to display.</p>
+            <a href="index.html" class="btn btn-primary-std">Start Shopping →</a>
+          </div>
+        `;
+                return;
+            }
+
+            const now = new Date(orderData.timestamp);
+            const orderId = orderData.orderId;
+            const total = orderData.total;
+            const orderDate = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const delivery = new Date(now.getTime() + 5 * 86400000);
+            const deliveryDate = delivery.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            document.getElementById('orderContent').innerHTML = `
+        <div class="order-success-hero">
+          <div class="success-circle"><span>✓</span></div>
+          <h2>Order Confirmed!</h2>
+          <p>Thank you for your purchase. Your order has been placed successfully.</p>
+        </div>
+        <div class="order-details-grid">
+          <div class="order-detail-card">
+            <h3>📋 Order Details</h3>
+            <div class="order-info-row"><span class="label">Order ID</span><span class="value">${orderId}</span></div>
+            <div class="order-info-row"><span class="label">Order Date</span><span class="value">${orderDate}</span></div>
+            <div class="order-info-row"><span class="label">Total Amount</span><span class="value price">${formatPrice(total)}</span></div>
+            <div class="order-info-row"><span class="label">Est. Delivery</span><span class="value delivery">${deliveryDate}</span></div>
+          </div>
+          <div class="order-detail-card">
+            <h3>📦 Order Status</h3>
+            <div class="timeline-step completed">
+              <div class="timeline-dot completed">✓</div>
+              <div class="timeline-info"><h4>Order Placed</h4><p>Your order has been confirmed</p></div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-dot"></div>
+              <div class="timeline-info"><h4>Processing</h4><p>Getting your items ready</p></div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-dot"></div>
+              <div class="timeline-info"><h4>Shipped</h4><p>On the way to you</p></div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-dot"></div>
+              <div class="timeline-info"><h4>Delivered</h4><p>Package will be delivered</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="order-actions">
+          <button class="btn btn-primary-std" onclick="showToast('Order tracking coming soon!')">🚚 Track Order</button>
+          <a href="index.html" class="btn btn-outline">Continue Shopping →</a>
+        </div>
+      `;
+
+            // Clear the stored order after display
+            localStorage.removeItem('shopease_last_order');
+        });
+    </script>
+</body>
+
+</html>

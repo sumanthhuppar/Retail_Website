@@ -62,8 +62,7 @@ ul, ol { list-style: none; }
 .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
 
 /* ---- Page System ---- */
-.page { display: none; min-height: 100vh; animation: fadeIn 0.3s ease; }
-.page.active { display: block; }
+/* Multi-page app — each page is a separate HTML file */
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -271,13 +270,10 @@ ul, ol { list-style: none; }
 /* ==========================================
    LOGIN PAGE
    ========================================== */
-.login-page.active {
+.login-page-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.login-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #1A1A2E 0%, #16213E 40%, #0F3460 100%);
   padding: 40px 20px;
@@ -606,6 +602,8 @@ ul, ol { list-style: none; }
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
   text-align: center;
+  text-decoration: none;
+  color: inherit;
 }
 
 .category-card:hover {
@@ -1382,4 +1380,44 @@ ul, ol { list-style: none; }
   .nav-bar .container { overflow-x: auto; scrollbar-width: none; }
   .categories-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---- Multi-page link styles ---- */
+.header-btn {
+  text-decoration: none;
+  color: rgba(255,255,255,0.7);
+}
+
+a.header-btn:hover {
+  color: #fff;
+}
+
+.cart-card-name {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
+}
+
+.cart-card-name:hover {
+  color: var(--primary);
+}
+
+a.see-all {
+  text-decoration: none;
+}
+
+a.nav-link {
+  text-decoration: none;
+}
+
+a.hero-cta {
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+a.btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

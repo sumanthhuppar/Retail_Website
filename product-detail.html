@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product – ShopEase</title>
+    <meta name="description"
+        content="View product details, pricing, and reviews. Add to cart and buy now on ShopEase." />
+    <link rel="stylesheet" href="styles.css" />
+    <script
+        src="https://cdn.c360a.salesforce.com/beacon/c360a/8842efab-59fa-426b-980d-b80e8fdeb8ed/scripts/c360a.min.js"></script>
+</head>
+
+<body>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Header -->
+    <header class="site-header" id="siteHeader"></header>
+
+    <main>
+        <div class="container detail-page-content">
+            <div class="breadcrumb" id="detailBreadcrumb"></div>
+            <div id="detailContent"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" id="siteFooter"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        let wishlisted = false;
+
+        function toggleWishlist() {
+            wishlisted = !wishlisted;
+            document.getElementById('wishlistBtn').textContent = wishlisted ? '❤️' : '🤍';
+            showToast(wishlisted ? 'Added to wishlist ❤️' : 'Removed from wishlist');
+        }
+
+        function selectSize(el) {
+            el.parentElement.querySelectorAll('.size-option').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function handleAddToCart(productId, productName) {
+            addToCart(productId);
+            showToast(productName + ' added to cart! 🛒');
+        }
+
+        function handleBuyNow(productId) {
+            addToCart(productId);
+            window.location.href = 'cart.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHeader('siteHeader');
+            renderFooter('siteFooter');
+
+            const id = parseInt(getUrlParam('id'));
+            const p = products.find(pr => pr.id === id);
+
+            if (!p) {
+                document.getElementById('detailContent').innerHTML = `
+          <div class="empty-cart">
+            <div class="emoji">😕</div>
+            <h3>Product not found</h3>
+            <p>The product you're looking for doesn't exist or has been removed.</p>
+            <a href="index.html" class="btn btn-primary-std">Go to Home →</a>
+          </div>
+        `;
+                return;
+            }
+
+            document.title = p.name + ' – ShopEase';
+
+            const emoji = productEmojis[p.image] || '📦';
+            const cat = categories.find(c => c.id === p.categoryId);
+
+            document.getElementById('detailBreadcrumb').innerHTML = `
+        <a href="index.html">Home</a>
+        <span class="sep">›</span>
+        <a href="products.html?cat=${p.categoryId}&name=${encodeURIComponent(cat?.name || 'Products')}">${cat?.name || 'Products'}</a>
+        <span class="sep">›</span>
+        <span>${p.name}</span>
+      `;
+
+            document.getElementById('detailContent').innerHTML = `
+        <div class="detail-layout">
+          <div class="detail-image-section">
+            <span class="discount-badge">${p.discount}% OFF</span>
+            <button class="wishlist-btn" id="wishlistBtn" onclick="toggleWishlist()">🤍</button>
+            ${emoji}
+          </div>
+          <div class="detail-info-section">
+            <div class="rating-row">
+              <span class="stars" style="font-size:16px;">${getStars(p.rating)}</span>
+              <span class="review-count" style="font-size:14px;">${p.rating} (${p.reviewCount} reviews)</span>
+            </div>
+            <h1 class="name">${p.name}</h1>
+            <div class="detail-price-row">
+              <span class="detail-price">${formatPrice(p.price)}</span>
+              <span class="detail-original">${formatPrice(p.originalPrice)}</span>
+              <span class="detail-discount-text">${p.discount}% off</span>
+            </div>
+            <div class="stock-badge in-stock">${p.inStock ? '✅ In Stock — Ready to ship' : '❌ Out of Stock'}</div>
+            <div class="detail-divider"></div>
+            <div class="size-label">Select Size</div>
+            <div class="size-options">
+              ${p.sizes.map((s, i) => `<button class="size-option ${i === 0 ? 'selected' : ''}" onclick="selectSize(this)">${s}</button>`).join('')}
+            </div>
+            <div class="detail-actions">
+              <button class="btn btn-outline" onclick="handleAddToCart(${p.id},'${p.name.replace(/'/g, "\\'")}')">🛒 Add to Cart</button>
+              <button class="btn btn-primary-std" onclick="handleBuyNow(${p.id})">Buy Now →</button>
+            </div>
+            <div class="features-grid">
+              <div class="feature-box"><span class="emoji">🚚</span><span class="label">Free Delivery</span></div>
+              <div class="feature-box"><span class="emoji">🔄</span><span class="label">Easy Returns</span></div>
+              <div class="feature-box"><span class="emoji">🔒</span><span class="label">Secure Payment</span></div>
+              <div class="feature-box"><span class="emoji">⭐</span><span class="label">Top Rated</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-description">
+          <h3>Product Description</h3>
+          <p>${p.description}</p>
+        </div>
+      `;
+        });
+    </script>
+</body>
+
+</html>

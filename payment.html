@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout – ShopEase</title>
+    <meta name="description"
+        content="Complete your purchase securely. Choose your payment method and confirm your order." />
+    <link rel="stylesheet" href="styles.css" />
+    <script
+        src="https://cdn.c360a.salesforce.com/beacon/c360a/8842efab-59fa-426b-980d-b80e8fdeb8ed/scripts/c360a.min.js"></script>
+</head>
+
+<body>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Header -->
+    <header class="site-header" id="siteHeader"></header>
+
+    <main>
+        <div class="container payment-page-content">
+            <h1 style="font-size:28px;font-weight:800;margin-bottom:24px;">💳 Checkout</h1>
+            <div id="paymentContent"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" id="siteFooter"></footer>
+
+    <script src="shared.js"></script>
+    <script>
+        function selectPayment(el) {
+            document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function placeOrder() {
+            const total = getTotal();
+            clearCart();
+
+            const now = new Date();
+            const orderId = '#SE' + now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+
+            // Store order details temporarily
+            localStorage.setItem('shopease_last_order', JSON.stringify({
+                orderId,
+                total,
+                timestamp: now.toISOString()
+            }));
+
+            window.location.href = 'order.html';
+        }
+
+        function renderPayment() {
+            const subtotal = getSubtotal();
+            const shipping = getShipping();
+            const discount = getDiscount();
+            const total = getTotal();
+            const count = getCartCount();
+
+            if (count === 0) {
+                document.getElementById('paymentContent').innerHTML = `
+          <div class="empty-cart">
+            <div class="emoji">🛒</div>
+            <h3>Your cart is empty</h3>
+            <p>Add some items to your cart before checking out.</p>
+            <a href="index.html" class="btn btn-primary-std">Start Shopping →</a>
+          </div>
+        `;
+                return;
+            }
+
+            document.getElementById('paymentContent').innerHTML = `
+        <div class="payment-layout">
+          <div class="payment-main">
+            <div class="pay-card">
+              <div class="pay-card-header">
+                <span class="emoji">📍</span>
+                <h3>Delivery Address</h3>
+                <span class="action" onclick="showToast('Address selection coming soon!')">Change</span>
+              </div>
+              <div class="address-box">
+                <div class="name">John Doe</div>
+                <div class="text">123 Main Street, Apt 4B<br>New York, NY 10001<br>Phone: +1 (555) 123-4567</div>
+              </div>
+            </div>
+            <div class="pay-card">
+              <div class="pay-card-header"><h3>Payment Method</h3></div>
+              <div class="payment-option selected" onclick="selectPayment(this)">
+                <span class="emoji">💳</span><span class="name">Credit / Debit Card</span><span class="radio"></span>
+              </div>
+              <div class="payment-option" onclick="selectPayment(this)">
+                <span class="emoji">📱</span><span class="name">UPI Payment</span><span class="radio"></span>
+              </div>
+              <div class="payment-option" onclick="selectPayment(this)">
+                <span class="emoji">🏦</span><span class="name">Net Banking</span><span class="radio"></span>
+              </div>
+              <div class="payment-option" onclick="selectPayment(this)">
+                <span class="emoji">💵</span><span class="name">Cash on Delivery</span><span class="radio"></span>
+              </div>
+            </div>
+          </div>
+          <div class="pay-sidebar">
+            <div class="summary-card">
+              <h3>Order Summary</h3>
+              <div class="summary-row"><span class="label">Subtotal (${count} items)</span><span class="value">${formatPrice(subtotal)}</span></div>
+              <div class="summary-row"><span class="label">Shipping</span><span class="value">${shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
+              <div class="summary-row discount"><span class="label">Discount</span><span class="value">-${formatPrice(discount)}</span></div>
+              <div class="summary-row total"><span class="label">Total</span><span class="value">${formatPrice(total)}</span></div>
+              <button class="btn btn-primary-full" onclick="placeOrder()">🔒 Pay ${formatPrice(total)} →</button>
+            </div>
+          </div>
+        </div>
+      `;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHeader('siteHeader');
+            renderFooter('siteFooter');
+            renderPayment();
+        });
+    </script>
+</body>
+
+</html>
