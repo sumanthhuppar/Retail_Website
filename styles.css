@@ -74,7 +74,6 @@ ul, ol { list-style: none; }
    ========================================== */
 .site-header {
   background: var(--secondary);
-  position: sticky;
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 12px rgba(0,0,0,0.15);
